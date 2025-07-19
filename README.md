@@ -43,6 +43,7 @@ $ pip show torch
 Make sure your numpy version is compatible with torch (<2.0):
 ```
 $ pip show numpy
+```
 
 ### Prepare directories for models and .pkl files
 ```
