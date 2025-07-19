@@ -6,7 +6,7 @@ Before this, read all papers professor send you to understand what you are doing
 https://news.fnal.gov/2014/10/fermilabs-500-mile-neutrino-experiment-up-and-running/
 
 ## Connect to Server
-1, To connect the server, you must be on the UCI network. You can access the network with a VPN if you aren't on campus, info available here: https://www.oit.uci.edu/services/security/vpn/  
+1, To connect the server, you must be on the UCI network. You can access the network with a VPN if you aren't on campus, info available here: https://www.oit.uci.edu/services/security/vpn/.
 2, Contact maintainer of the server to get an account on the server such as you@tau-neutrino.ps.uci.edu, and an initial password.  
 3, Connect to the server with your initial password:  
 ```$ssh you@tau-neutrino.ps.uci.edu```  
@@ -17,7 +17,7 @@ You are not entitled to run at root or sudo.
 
 ## Deploy the repo to the server under your directory
 1, You need to be able to access github from the server. You can generate a personal token in GitHub Settings -> Developer settings -> Personal access tokens -> Tokens (classic) -> Generate new token -> Generate new token (classic). Remember to copy and save the generated token because it will only be displayed once.
-2,  Your directory path on the server is /home/you/, init your remote repo    
+2, Your directory path on the server is /home/you/, init your remote repo    
 ```$ git clone url_to_repo```
 where url_to_repo is ```https://github.com/zhongyiwu/nova.git```, or that replacing "zhongyiwu" with your own username if you forked your own version (don't worry about that point if you're just starting though). You will be asked for your GitHub username and password. Your username should be your normal username, but the password should be the personal token you just generated. Now, this repo should appear as the directory "nova". 
 All tensorflow tutorial files are packed in the "tensorflow" directory in case you don't have them. If you have gone through the tensorflow version in the tau server, you can only keep the "pytorch_version".
