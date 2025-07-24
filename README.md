@@ -90,7 +90,7 @@ where model options are ```--googlenet``` and ```--mobilenet```. You can choose 
 
 For example:
 ```
-$ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10 --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
+$ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
 ```
 
 You can check the run status in your log file, and the output model file will be saved in the models directory.
@@ -99,7 +99,7 @@ If you want to run your tasks in a tmux (detached) session:
 ```
 $ tmux
 $ bash
-$ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10 --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
+$ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
 ```
 ## Testing
 After the trainning, you will see .pt files in your "models" directory. Open test2.py and change the saving path for the output .pkl file.
@@ -111,7 +111,7 @@ $ python test2.py --modelpath /home/you/nova/models/your_pt_file.pt --path /test
 
 You need to use the same model_type for testing as for training, but you can use either the same or different set of files for testing. For example:
 ```
-$ python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10 --name pytorch_tau_test --model googlenet
+$ python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name pytorch_tau_test --model googlenet
 ```
 
 The output .pkl files will be saved to "pkl_file" directory. 
