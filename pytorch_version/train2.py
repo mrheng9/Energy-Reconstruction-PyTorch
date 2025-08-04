@@ -13,6 +13,7 @@ def train(args):
     path = args.path
     name = args.name
     model_type = args.model
+    weighted = args.weighted
     input_shape = (2, 100, 80)
     batch_size = 128
     epochs = 100
@@ -26,8 +27,8 @@ def train(args):
     train_files = filenames[:split]
     valid_files = filenames[split:]
 
-    train_dataset = cvngenerator(path, train_files, input_shape=input_shape)
-    valid_dataset = cvngenerator(path, valid_files, input_shape=input_shape)
+    train_dataset = cvngenerator(path, train_files, input_shape=input_shape, weighted=weighted)
+    valid_dataset = cvngenerator(path, valid_files, input_shape=input_shape, weighted=weighted)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
@@ -55,6 +56,8 @@ def train(args):
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     print(f"🚀 Training started with learning rate = {learning_rate}, batch size = {batch_size}, epochs = {epochs}\n")
+    if weighted:
+        print("⚖️ Using weighted training")
 
     save_dir = "/home/zhongyi/nova/pytorch_version/models"
     os.makedirs(save_dir, exist_ok=True)
@@ -68,15 +71,24 @@ def train(args):
         running_loss = 0.0
         total_steps = len(train_loader)
 
-        for step, (inputs, targets) in enumerate(train_loader):
+        for step, batch in enumerate(train_loader):
             global_step += 1
+            if weighted:
+                inputs, targets, weights = batch
+                weights = weights.to(device)
+            else:
+                inputs, targets = batch
+            
             inputs = inputs.to(device)
             input_x = inputs[:, 0:1, :, :]
             input_y = inputs[:, 1:2, :, :]
             targets = targets.to(device).unsqueeze(1)
 
             outputs = model(input_x, input_y)
-            loss = criterion(outputs, targets)
+            if weighted:
+                loss = (torch.abs(outputs - targets) * weights.unsqueeze(1)).mean()
+            else:
+                loss = criterion(outputs, targets)
 
             optimizer.zero_grad()
             loss.backward()
@@ -89,14 +101,24 @@ def train(args):
                 total_absolute_error = 0.0
                 total_targets = 0.0
                 with torch.no_grad():
-                    for inputs_val, targets_val in valid_loader:
+                    for batch_val in valid_loader:
+                        if weighted:
+                            inputs_val, targets_val, weights_val = batch_val
+                            weights_val = weights_val.to(device)
+                        else:
+                            inputs_val, targets_val = batch_val
+                            
                         inputs_val = inputs_val.to(device)
                         input_x_val = inputs_val[:, 0:1, :, :]
                         input_y_val = inputs_val[:, 1:2, :, :]
                         targets_val = targets_val.to(device).unsqueeze(1)
 
                         outputs_val = model(input_x_val, input_y_val)
-                        loss_val = criterion(outputs_val, targets_val)
+                        if weighted:
+                            loss_val = (torch.abs(outputs_val - targets_val) * weights_val.unsqueeze(1)).mean()
+                        else:
+                            loss_val = criterion(outputs_val, targets_val)
+                            
                         val_loss += loss_val.item()
                         total_absolute_error += torch.sum(torch.abs(outputs_val - targets_val)).item()
                         total_targets += torch.sum(targets_val).item()
@@ -131,5 +153,6 @@ if __name__ == '__main__':
     parser.add_argument("--name", type=str, required=True, help="a descriptive name for the model")
     parser.add_argument("--path", type=str, required=True, help="path to the folder containing h5 files")
     parser.add_argument("--model", type=str, default="mobilenet", choices=["mobilenet", "googlenet"], help="which model to use: mobilenet or googlenet")
+    parser.add_argument("--weighted", action="store_true", help="use weighted training")
     args = parser.parse_args()
     train(args)

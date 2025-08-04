@@ -93,6 +93,11 @@ For example:
 $ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
 ```
 
+For weighted training:
+```
+$ python train2.py --path /path/to/data --model model_type --weighted --name model_name | tee log_file_name.log
+```
+
 You can check the run status in your log file, and the output model file will be saved in the models directory.
 
 If you want to run your tasks in a tmux (detached) session:
