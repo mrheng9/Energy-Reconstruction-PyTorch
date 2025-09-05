@@ -3,9 +3,11 @@ import numpy as np
 import pickle
 import argparse
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  
 from Preprocessed_Pytorch import cvngenerator
 from Mobilenet_Regression import MobileNetRegression
 from Googlenet_Regression import GoogLeNetRegression
+from Resnet_Regression import ResNetRegression
 from torch.utils.data import DataLoader
 import torch.multiprocessing as mp
 
@@ -19,6 +21,8 @@ def evaluate(args):
         model = MobileNetRegression().to(device)
     elif args.model == "googlenet":
         model = GoogLeNetRegression().to(device)
+    elif args.model == "resnet":
+        model = ResNetRegression().to(device)
     else:
         raise ValueError("Invalid model type. Choose 'mobilenet' or 'googlenet'")
 
@@ -61,7 +65,7 @@ def evaluate(args):
         "resolution": resolution
     }
 
-    save_path = f"/home/zhongyi/nova/pytorch_version/pkl_file/{args.name}_predictions.pkl"
+    save_path = f"/home/houyh/nova/pytorch_version/pkl_file/{args.name}_predictions.pkl"
     with open(save_path, "wb") as f:
         pickle.dump(output, f)
 
@@ -74,7 +78,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--steps", type=int, default=100)
     parser.add_argument("--name", type=str, default="test2")
-    parser.add_argument("--model", type=str, default="mobilenet", choices=["mobilenet", "googlenet"], help="Model type: mobilenet or googlenet")
+    parser.add_argument("--model", type=str, default="mobilenet", choices=["mobilenet", "googlenet","resnet"], help="Model type: mobilenet or googlenet")
     args = parser.parse_args()
 
     evaluate(args)
