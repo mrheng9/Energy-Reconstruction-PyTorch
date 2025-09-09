@@ -78,48 +78,134 @@ $ scp /local/path/ yourname@tau-neutrino.ps.uci.edu:/home/you/nova/pytorch_versi
 
 ## Training
 ### Run 
-#### for NuE energy: (good start)
-First, open train2.py with nano: ```$ nano train2.py``` (or other editors you are familiar with), and change the saving path of model to your own path ```/home/you/nova/pytorch_version/models```. You can also make your own directory for and add the saving path of the log file in the python file.
+Our data directory on the server: `/mnt/ironwolf_20t/users/yuechen/data/`  
 
-Then run the command:
+First, prepare your directories and configure the training script:
+```bash
+$mkdir -p yourbase/models/debug  # That's where you save the trained model and weights
+$cd <yourbase>
 ```
-$ python train2.py --path /path/to/data --model model_type --name model_name | tee log_file_name.log
+
+Open train2.py with nano: `$ nano train2.py` (or other editors you are familiar with), and change the saving path of model to your own path `/home/you/nova/pytorch_version/models`. You can also make your own directory and add the saving path of the log file in the python file.
+
+#### Different ways to run the model 
+(choose the one you prefer)
+
+**First: nohup**
+```bash
+$nohup python train2.py --path <path to data folder> --model <model_type> --name <pick a name> &
+```
+For example :
+```bash
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch &
+```
+(Change the path to yourbase/data/after_process_Jan10_train if you have your own dataset)   
+Check running display information in nohup.out
+
+If needed, add the name to the log file:
+```bash
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch > train_tau_pytorch.log 2>&1 &
+```
+This is a great way to keep your logs tidy. It ensures that the output from each training process gets its own file, which is perfect for when you're running different jobs on different GPUs at the same time and want to keep things separate.  
+
+Check running display information in train_tau_pytorch.log
+
+***
+
+**Second: Tmux (Alternative way of nohup): Connect to Server without piping off**
+```bash
+$tmux new -s <session_name>  # Create new session with custom name
+```
+For example (This allows you to run long processes and detach/reattach as needed):
+```bash
+$tmux new -s ml_training  # Create a new session named "ml_training"
+```
+Once inside the tmux session, you can run your training command:
+```bash
+$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
 ```
 
-where model options are ```--googlenet``` and ```--mobilenet```. You can choose arbitrary names for your model and log file.
+Managing tmux sessions:
+```bash
+# Detach from current session (keeps processes running)
+$tmux detach
+# Or use keyboard shortcut: Ctrl+b, then d
 
+# List all active sessions
+$tmux ls
+
+# Reattach to a specific session
+$tmux attach -t ml_training
+
+# Switch between sessions (when inside tmux)
+$tmux switch -t ml_training
+
+# Kill a session when no longer needed
+$tmux kill-session -t ml_training
+```
+
+If needed, you can also redirect output within tmux:
+```bash
+$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch > training.log 2>&1
+```
+***
+
+**Third: tee (Real-time monitoring with log)**
+```bash
+$python train2.py --path <path to data> --model <model_type> --name <model_name> | tee log_file_name.log
+```
 For example:
-```
-$ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
+```bash
+$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
 ```
 
-For weighted training:
+### More functions
+#### for model types:
+Model options are `resnet` ,`--googlenet` and `--mobilenet`. You can choose arbitrary names for your model and log file.
+```bash
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model mobilenet --name mobile_train_output &
 ```
-$ python train2.py --path /path/to/data --model model_type --weighted --name model_name | tee log_file_name.log
+
+#### for weighted training:
+Add the `--weighted` flag to run weighted training:
+```bash
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --weighted --name train_tau_pytorch_weighted &
 ```
+For example, to run weighted training with tmux:
+
 
 You can check the run status in your log file, and the output model file will be saved in the models directory.
 
-If you want to run your tasks in a tmux (detached) session:
-```
-$ tmux
-$ bash
-$ python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
-```
 ## Testing
-After the trainning, you will see .pt files in your "models" directory. Open test2.py and change the saving path for the output .pkl file.
+After the training, you will see .pt files in your "models" directory. 
 
 To test the models:
-```
-$ python test2.py --modelpath /home/you/nova/models/your_pt_file.pt --path /testing/file/path --name pkl_file_name --model model_type
-```
-
-You need to use the same model_type for testing as for training, but you can use either the same or different set of files for testing. For example:
-```
-$ python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name pytorch_tau_test --model googlenet
+```bash
+$mkdir -p yourbase/predictions/  # Create directory for test results
 ```
 
-The output .pkl files will be saved to "pkl_file" directory. 
+Open test2.py and change the saving path for the output .pkl file to your own path.
+
+```bash
+$nohup python test2.py --modelpath <your training results> --model <model_type> --path <testing file folder> --name <pick_a_name> &
+```
+For example:
+```bash
+$nohup python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --model googlenet --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name pytorch_tau_test &
+```
+
+If needed, add the name to the log file:
+```bash
+$nohup python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --model googlenet --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name pytorch_tau_test > pytorch_tau_test.log 2>&1 &
+```
+
+**Note:** 
+- You need to use the same model_type for testing as for training
+- You can use either the same or different set of files for testing
+- There is no `--weighted` option in testing phase
+- The output .pkl files will be saved to "pkl_file" directory
+- Check running display information in nohup.out or your specified log file
+- Check testing result in yourbase/predictions/{}_{}.pkl
 
 ## Plotting
 ### Run Jupyter notebook
