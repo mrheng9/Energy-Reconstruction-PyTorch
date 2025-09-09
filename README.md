@@ -97,18 +97,18 @@ $nohup python train2.py --path <path to data folder> --model <model_type> --name
 ```
 For example :
 ```bash
-$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch &
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train &
 ```
 (Change the path to yourbase/data/after_process_Jan10_train if you have your own dataset)   
 Check running display information in nohup.out
 
 If needed, add the name to the log file:
 ```bash
-$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch > train_tau_pytorch.log 2>&1 &
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train > train.log 2>&1 &
 ```
 This is a great way to keep your logs tidy. It ensures that the output from each training process gets its own file, which is perfect for when you're running different jobs on different GPUs at the same time and want to keep things separate.  
 
-Check running display information in train_tau_pytorch.log
+Check running display information in train.log
 
 ***
 
@@ -122,7 +122,7 @@ $tmux new -s ml_training  # Create a new session named "ml_training"
 ```
 Once inside the tmux session, you can run your training command:
 ```bash
-$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
+$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train | tee train.log
 ```
 
 Managing tmux sessions:
@@ -146,7 +146,7 @@ $tmux kill-session -t ml_training
 
 If needed, you can also redirect output within tmux:
 ```bash
-$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch > training.log 2>&1
+$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train > train.log 2>&1
 ```
 ***
 
@@ -156,10 +156,16 @@ $python train2.py --path <path to data> --model <model_type> --name <model_name>
 ```
 For example:
 ```bash
-$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train_tau_pytorch | tee train_tau_pytorch.log
+$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train | tee train.log
 ```
 
 ### More functions
+#### for mode (nue/electron):
+Change ```--mode``` nue to ```--mode``` electron:
+```
+$nohup python3.6 train.py --mode electron --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --name electron_train_output &
+```
+
 #### for model types:
 Model options are `resnet` ,`--googlenet` and `--mobilenet`. You can choose arbitrary names for your model and log file.
 ```bash
@@ -169,7 +175,7 @@ $nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_proces
 #### for weighted training:
 Add the `--weighted` flag to run weighted training:
 ```bash
-$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --weighted --name train_tau_pytorch_weighted &
+$nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train  --weighted --name train_weighted &
 ```
 For example, to run weighted training with tmux:
 
@@ -191,12 +197,12 @@ $nohup python test2.py --modelpath <your training results> --model <model_type> 
 ```
 For example:
 ```bash
-$nohup python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --model googlenet --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name pytorch_tau_test &
+$nohup python test2.py --modelpath /home/you/nova/pytorch_version/models/train.pt --model googlenet --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name test &
 ```
 
 If needed, add the name to the log file:
 ```bash
-$nohup python test2.py --modelpath /home/you/nova/pytorch_version/models/train_tau_pytorch.pt --model googlenet --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name pytorch_tau_test > pytorch_tau_test.log 2>&1 &
+$nohup python test2.py --modelpath /home/you/nova/pytorch_version/models/train.pt --model googlenet --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test --name test > test.log 2>&1 &
 ```
 
 **Note:** 
