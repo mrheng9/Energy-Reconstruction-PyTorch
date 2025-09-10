@@ -25,7 +25,7 @@ def train(args):
     input_shape = (2, 100, 80)
     learning_rate = 1e-4
 
-    early_stop_patience = 10
+    early_stop_patience = args.early_stop_patience
 
     filenames = sorted(os.listdir(path))
     filenames = random.sample(filenames, len(filenames) // 8)  
@@ -55,7 +55,7 @@ def train(args):
     elif model_type == "resnet":
         model = ResNetRegression().to(device)
     else:
-        raise ValueError("Invalid model type. Choose 'mobilenet' or 'googlenet'.")
+        raise ValueError("Invalid model type. Choose 'resnet','mobilenet' or 'googlenet'.")
 
     print("🧠 Model architecture:")
     print(model)
@@ -183,9 +183,10 @@ if __name__ == '__main__':
     parser.add_argument("--epochs", type=int, default=100, help="number of training epochs")
     parser.add_argument("--batch_size", type=int, default=64, help="batch size for training")
     parser.add_argument("--name", type=str, required=True, help="a descriptive name for the model")
-    parser.add_argument("--path", type=str, required=True, help="path to the folder containing h5 files")
+    parser.add_argument("--path", default ='/mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train',type=str, required=True, help="path to the folder containing h5 files")
     parser.add_argument("--model", type=str, default="mobilenet", choices=["mobilenet", "googlenet","resnet"], help="which model to use: resnet,mobilenet or googlenet")
     parser.add_argument("--mode", type=str, default="nue", choices=["nue", "electron"], help="data mode: nue or electron")
     parser.add_argument("--weighted", action="store_true", help="use weighted training")
+    parser.add_argument("--early_stop_patience", type=int, default=10, help="early stopping patience (default: 10)")
     args = parser.parse_args()
     train(args)

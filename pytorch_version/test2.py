@@ -74,7 +74,7 @@ def evaluate(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--modelpath", type=str, required=True, help="Path to trained PyTorch model (.pt)")
-    parser.add_argument("--path", type=str, required=True, help="Path to validation data directory")
+    parser.add_argument("--path", deault='/mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_test ',type=str, help="Path to validation data directory")
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--steps", type=int, default=100)
     parser.add_argument("--name", type=str, default="test2")

@@ -106,7 +106,7 @@ class ResNetRegression(nn.Module):
         
         # Create top shared layers
         top_layers = []
-        in_channels = filter_number * 4  # Output channels from subnet's last layer
+        in_channels = filter_number * 4  
         out_channels = filter_number * 8
         
         for _ in range(num_top_blocks):
@@ -117,7 +117,6 @@ class ResNetRegression(nn.Module):
         top_layers.append(nn.AdaptiveAvgPool2d((1, 1)))
         self.shared_layers = nn.Sequential(*top_layers)
         
-        # Create regressor
         self.regressor = nn.Sequential(
             nn.Flatten(),
             nn.Linear(out_channels, 1024),
