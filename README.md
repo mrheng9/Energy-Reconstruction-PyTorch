@@ -88,10 +88,10 @@ $cd <yourbase>
 
 Open train2.py with nano: `$ nano train2.py` (or other editors you are familiar with), and change the saving path of model to your own path `/home/you/nova/pytorch_version/models`. You can also make your own directory and add the saving path of the log file in the python file.
 
-#### Different ways to run the model 
-(choose the one you prefer)
+#### [Different ways to run the model](https://github.com/mrheng9/mrheng9/blob/main/docs/tuotorial.md#execution-methods) 
+Choose the one you prefer  
+Here use `nohup` as a demonstration
 
-**First: nohup**
 ```bash
 $nohup python train2.py --path <path to data folder> --model <model_type> --name <pick a name> &
 ```
@@ -107,57 +107,9 @@ If needed, add the name to the log file:
 $nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train > train.log 2>&1 &
 ```
 This is a great way to keep your logs tidy. It ensures that the output from each training process gets its own file, which is perfect for when you're running different jobs on different GPUs at the same time and want to keep things separate.  
+[GPU Management](https://github.com/mrheng9/mrheng9/blob/main/docs/tuotorial.md#gpu-management)
 
 Check running display information in train.log
-
-***
-
-**Second: Tmux (Alternative way of nohup): Connect to Server without piping off**
-```bash
-$tmux new -s <session_name>  # Create new session with custom name
-```
-For example (This allows you to run long processes and detach/reattach as needed):
-```bash
-$tmux new -s ml_training  # Create a new session named "ml_training"
-```
-Once inside the tmux session, you can run your training command:
-```bash
-$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train | tee train.log
-```
-
-Managing tmux sessions:
-```bash
-# Detach from current session (keeps processes running)
-$tmux detach
-# Or use keyboard shortcut: Ctrl+b, then d
-
-# List all active sessions
-$tmux ls
-
-# Reattach to a specific session
-$tmux attach -t ml_training
-
-# Switch between sessions (when inside tmux)
-$tmux switch -t ml_training
-
-# Kill a session when no longer needed
-$tmux kill-session -t ml_training
-```
-
-If needed, you can also redirect output within tmux:
-```bash
-$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train > train.log 2>&1
-```
-***
-
-**Third: tee (Real-time monitoring with log)**
-```bash
-$python train2.py --path <path to data> --model <model_type> --name <model_name> | tee log_file_name.log
-```
-For example:
-```bash
-$python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train | tee train.log
-```
 
 ### More functions
 #### for mode (nue/electron):
@@ -167,7 +119,7 @@ $nohup python3.6 train.py --mode electron --path /mnt/ironwolf_20t/users/yuechen
 ```
 
 #### for model types:
-Model options are `resnet` ,`--googlenet` and `--mobilenet`. You can choose arbitrary names for your model and log file.
+Model options are `--resnet` ,`--googlenet` and `--mobilenet`. You can choose arbitrary names for your model and log file.
 ```bash
 $nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model mobilenet --name mobile_train_output &
 ```
