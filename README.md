@@ -1,9 +1,15 @@
-# NOvA CAF HDF5 Implement Development (Pytorch Version) 
+# NOvA CAF HDF5 Implement Development (Pytorch) 
 This tutorial based on the server @tau-neutrino.ps.uci.edu  
-Before this, read all papers professor send you to understand what you are doing.
 
- ![image](https://user-images.githubusercontent.com/80438168/169384112-ba0c39ed-f50a-4a03-bf0f-301b3690cc56.png)
-https://news.fnal.gov/2014/10/fermilabs-500-mile-neutrino-experiment-up-and-running/
+## Background
+![image](https://user-images.githubusercontent.com/80438168/169384112-ba0c39ed-f50a-4a03-bf0f-301b3690cc56.png)  
+This tutorial will focus primarily on the implementation details in PyTorch. Therefore, we assume you are already familiar with the background of the NOvA experiment, the data structure, and the concept of energy reconstruction.
+
+If you are new to this topic, we strongly recommend you first read the detailed background section provided in our original [NOvA CAF HDF5 Implement Development (TensorFlow)](https://github.com/ayankele/nova?tab=readme-ov-file#nova-caf-hdf5-implement-development).
+
+For a deeper dive into the scientific context, we encourage you to explore the official NOvA experiment publications and technical documentation. Understanding the underlying physics and data generation process is key to developing effective models.
+
+[More about the NOvA](https://news.fnal.gov/2014/10/fermilabs-500-mile-neutrino-experiment-up-and-running/)
 
 ## Connect to Server
 1, To connect the server, you must be on the UCI network. You can access the network with a VPN if you aren't on campus, info available here: https://www.oit.uci.edu/services/security/vpn/.
@@ -107,7 +113,7 @@ If needed, add the name to the log file:
 $nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train --model googlenet --name train > train.log 2>&1 &
 ```
 This is a great way to keep your logs tidy. It ensures that the output from each training process gets its own file, which is perfect for when you're running different jobs on different GPUs at the same time and want to keep things separate.  
-[GPU Management](https://github.com/mrheng9/mrheng9/blob/main/docs/tuotorial.md#gpu-management)
+Learn how to manage GPU ([GPU Management](https://github.com/mrheng9/mrheng9/blob/main/docs/tuotorial.md#gpu-management))
 
 Check running display information in train.log
 
@@ -129,10 +135,6 @@ Add the `--weighted` flag to run weighted training:
 ```bash
 $nohup python train2.py --path /mnt/ironwolf_20t/users/yuechen/data/after_process_Jan10_train  --weighted --name train_weighted &
 ```
-For example, to run weighted training with tmux:
-
-
-You can check the run status in your log file, and the output model file will be saved in the models directory.
 
 ## Testing
 After the training, you will see .pt files in your "models" directory. 
